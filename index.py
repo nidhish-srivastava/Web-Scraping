@@ -7,15 +7,29 @@ def scrape_data(url):
     response = requests.get(url)
     html_content = response.content
     soup = BeautifulSoup(html_content,"html.parser")
-    title = soup.find('title').get_text(strip=True) if soup.find('title') else 'No title found'
     
-    # Add more data extraction logic here as needed
-    return {
-        'url': url,
-        'title': title,
-        # Add other extracted data here
-    }
+    # main_container = soup.find('header',class_='product_product__header__Pj3EF')
+    main_container = soup.find('div',class_='product_product__header__container__8NZKm')
 
+    if main_container:
+        heading = main_container.find('h1',class_='product_product__header__container__heading__gpZqn').get_text(strip=True)
+        description = main_container.find('p',class_='product_product__header__container__paragraph__N2JKx').get_text(strip=True)
+        instructorsContainer = main_container.find('div',class_='product_product__header__container__instructor__TkB0j')
+        instructors = []
+        if instructorsContainer:
+            instructor = instructorsContainer.find('div',class_='product_product__header__container__instructor__item__lYy4k').get_text(strip=True)
+            instructors.append(instructor)
+        publishedDateContainer = main_container.find('div',class_='product_product__header__container__info__7CiBp')    
+        publishedDate = ""
+        if publishedDateContainer:
+            publishedDate = publishedDateContainer.find('div',class_='product_product__header__container__info__updated__70LJr').get_text(strip=True)
+
+        return{
+            'heading' : heading,
+            'description' : description,
+            'instructors' : instructors,
+            'publishedDate' : publishedDate
+        }    
 
 
 
